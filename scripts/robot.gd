@@ -8,6 +8,8 @@ const CombatRules = preload("res://scripts/combat_rules.gd")
 const MAX_HEALTH := 100
 const ATTACK_RANGE := 2.35
 const WALK_SPEED := 5.25
+const GUARD_DURATION := 1.1
+const GUARD_COOLDOWN := 3.0
 
 var player_controlled := false
 var display_name := "Robot"
@@ -15,6 +17,8 @@ var body_color := Color(0.10, 0.80, 0.95)
 var opponent: ArenaRobot
 var health := MAX_HEALTH
 var _cooldown := 0.0
+var _guard_remaining := 0.0
+var _guard_cooldown_remaining := 0.0
 
 
 func _ready() -> void:
@@ -56,10 +60,15 @@ func _physics_process(delta: float) -> void:
 	if health == 0:
 		return
 	_cooldown = maxf(0.0, _cooldown - delta)
+	_guard_remaining = maxf(0.0, _guard_remaining - delta)
+	_guard_cooldown_remaining = maxf(0.0, _guard_cooldown_remaining - delta)
 	var move_direction := Vector3.ZERO
 	if player_controlled:
 		var axis := Input.get_vector("move_left", "move_right", "move_up", "move_down")
 		move_direction = Vector3(axis.x, 0, axis.y).normalized()
+		if Input.is_action_just_pressed("guard") and CombatRules.may_raise_guard(_guard_remaining, _guard_cooldown_remaining):
+			_guard_remaining = GUARD_DURATION
+			_guard_cooldown_remaining = GUARD_COOLDOWN
 		if Input.is_action_just_pressed("attack"):
 			_try_attack()
 	elif is_instance_valid(opponent) and opponent.health > 0:
@@ -84,7 +93,7 @@ func _physics_process(delta: float) -> void:
 
 
 func _try_attack() -> void:
-	if _cooldown > 0.0 or not is_instance_valid(opponent) or opponent.health == 0:
+	if _cooldown > 0.0 or _guard_remaining > 0.0 or not is_instance_valid(opponent) or opponent.health == 0:
 		return
 	var distance := global_position.distance_to(opponent.global_position)
 	if not CombatRules.in_range(distance, ATTACK_RANGE):
@@ -96,7 +105,15 @@ func _try_attack() -> void:
 func receive_damage(base_damage: int) -> void:
 	if health == 0:
 		return
-	health = CombatRules.remaining_health(health, CombatRules.effective_damage(base_damage, 2), MAX_HEALTH)
+	health = CombatRules.remaining_health(health, CombatRules.guarded_damage(base_damage, 2, _guard_remaining > 0.0), MAX_HEALTH)
 	health_changed.emit(health, MAX_HEALTH)
 	if health == 0:
 		defeated.emit()
+
+
+func guard_status() -> String:
+	if _guard_remaining > 0.0:
+		return "ATIVO"
+	if _guard_cooldown_remaining > 0.0:
+		return "RECARGA %.1fs" % _guard_cooldown_remaining
+	return "PRONTO"
