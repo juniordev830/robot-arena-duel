@@ -12,6 +12,7 @@
 
 - **WASD / setas:** movimentar robô azul.
 - **Espaço:** atacar quando o adversário estiver perto.
+- **B:** ativar defesa temporária; durante a defesa, o ataque fica bloqueado.
 - **R:** reiniciar a partida.
 
 O robô vermelho se aproxima e ataca automaticamente. A partida termina quando um dos dois fica sem vida.
@@ -45,3 +46,10 @@ godot --headless --path . --script tests/test_combat.gd
 - Testes integrados e exportação para Windows/Linux.
 
 MIT License.
+
+
+## Mecânica de defesa (novo)
+
+Pressione **B** para ativar uma defesa por **1,1 segundo**; durante esse intervalo o dano após a armadura é reduzido a aproximadamente 40%, nunca abaixo de 1 ponto quando um ataque válido acerta. A defesa entra em recarga por **3 segundos** contados a partir da ativação. O estado aparece no HUD como `PRONTO`, `ATIVO` ou `RECARGA`.
+
+O módulo `scripts/combat_rules.gd` contém o cálculo de dano e a validação dos temporizadores. Os testes automatizados cobrem dano normal, defesa, valores inválidos e bloqueio de recarga. A mecânica é fictícia e não simula defesa física real.
