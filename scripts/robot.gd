@@ -74,15 +74,15 @@ func _physics_process(delta: float) -> void:
 	if player_controlled:
 		var axis := Input.get_vector("move_left", "move_right", "move_up", "move_down")
 		move_direction = Vector3(axis.x, 0, axis.y).normalized()
-		if Input.is_action_just_pressed("guard") and CombatRules.may_raise_guard(_guard_remaining, _guard_cooldown_remaining):
-			_guard_remaining = GUARD_DURATION
-			_guard_cooldown_remaining = GUARD_COOLDOWN
-		if Input.is_action_just_pressed("attack"):
-			_try_attack()
 		if Input.is_action_just_pressed("dash") and CombatRules.may_dash(_dash_cooldown_remaining, move_direction, _guard_remaining > 0.0):
 			_dash_direction = move_direction
 			_dash_remaining = DASH_DURATION
 			_dash_cooldown_remaining = DASH_COOLDOWN
+		if Input.is_action_just_pressed("guard") and CombatRules.may_raise_guard(_guard_remaining, _guard_cooldown_remaining, _dash_remaining > 0.0):
+			_guard_remaining = GUARD_DURATION
+			_guard_cooldown_remaining = GUARD_COOLDOWN
+		if Input.is_action_just_pressed("attack"):
+			_try_attack()
 	elif is_instance_valid(opponent) and opponent.health > 0:
 		var toward := opponent.global_position - global_position
 		toward.y = 0.0
@@ -109,7 +109,7 @@ func _physics_process(delta: float) -> void:
 
 
 func _try_attack() -> void:
-	if _cooldown > 0.0 or _guard_remaining > 0.0 or not is_instance_valid(opponent) or opponent.health == 0:
+	if _cooldown > 0.0 or _guard_remaining > 0.0 or _dash_remaining > 0.0 or not is_instance_valid(opponent) or opponent.health == 0:
 		return
 	var distance := global_position.distance_to(opponent.global_position)
 	if not CombatRules.in_range(distance, ATTACK_RANGE):
@@ -121,7 +121,10 @@ func _try_attack() -> void:
 func receive_damage(base_damage: int) -> void:
 	if health == 0:
 		return
-	health = CombatRules.remaining_health(health, CombatRules.guarded_damage(base_damage, 2, _guard_remaining > 0.0), MAX_HEALTH)
+	var damage: int = CombatRules.incoming_damage(base_damage, 2, _guard_remaining > 0.0, _dash_remaining > 0.0)
+	if damage == 0:
+		return
+	health = CombatRules.remaining_health(health, damage, MAX_HEALTH)
 	health_changed.emit(health, MAX_HEALTH)
 	if health == 0:
 		defeated.emit()
