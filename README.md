@@ -53,3 +53,9 @@ MIT License.
 Pressione **B** para ativar uma defesa por **1,1 segundo**; durante esse intervalo o dano após a armadura é reduzido a aproximadamente 40%, nunca abaixo de 1 ponto quando um ataque válido acerta. A defesa entra em recarga por **3 segundos** contados a partir da ativação. O estado aparece no HUD como `PRONTO`, `ATIVO` ou `RECARGA`.
 
 O módulo `scripts/combat_rules.gd` contém o cálculo de dano e a validação dos temporizadores. Os testes automatizados cobrem dano normal, defesa, valores inválidos e bloqueio de recarga. A mecânica é fictícia e não simula defesa física real.
+
+## Impulso rápido (dash)
+
+Pressione **Shift** enquanto movimenta o robô azul com WASD ou setas para executar um impulso curto na direção atual. O impulso dura **0,2 segundo**, usa velocidade maior e entra em recarga por **3,2 segundos** a partir da ativação.
+
+Não é possível ativá-lo parado nem durante a defesa. O HUD mostra `PRONTO`, `IMPULSO` ou `RECARGA`. Os casos de uso e bloqueios são verificados em `tests/test_combat.gd`.
