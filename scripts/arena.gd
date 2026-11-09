@@ -106,7 +106,7 @@ func _add_box(size: Vector3, pos: Vector3, tint: Color, solid: bool = true) -> v
 func _refresh_hud() -> void:
 	if not is_instance_valid(hud) or not is_instance_valid(player) or not is_instance_valid(enemy):
 		return
-	hud.text = "ROBOT ARENA DUEL  •  MVP\nAZUL  %d / 100       VERMELHO  %d / 100\nDEFESA: %s (B)   |   IMPULSO: %s (SHIFT)\nWASD / setas: mover    ESPACO: atacar    R: reiniciar\n%s" % [player.health, enemy.health, player.guard_status(), player.dash_status(), outcome]
+	hud.text = "ROBOT ARENA DUEL  •  MVP\nAZUL  %d / 100       VERMELHO  %d / 100\nDEFESA: %s (B)   |   ESQUIVA: %s (SHIFT)\nWASD / setas: mover    ESPACO: atacar    R: reiniciar\n%s" % [player.health, enemy.health, player.guard_status(), player.dash_status(), outcome]
 
 
 func _setup_controls() -> void:
