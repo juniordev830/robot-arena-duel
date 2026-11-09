@@ -59,3 +59,9 @@ O módulo `scripts/combat_rules.gd` contém o cálculo de dano e a validação d
 Pressione **Shift** enquanto movimenta o robô azul com WASD ou setas para executar um impulso curto na direção atual. O impulso dura **0,2 segundo**, usa velocidade maior e entra em recarga por **3,2 segundos** a partir da ativação.
 
 Não é possível ativá-lo parado nem durante a defesa. O HUD mostra `PRONTO`, `IMPULSO` ou `RECARGA`. Os casos de uso e bloqueios são verificados em `tests/test_combat.gd`.
+
+### Janela de esquiva e consistência do combate
+
+Durante os **0,2 segundo** de impulso ativo, o robô não sofre dano de ataques. Fora desse intervalo, a armadura e a defesa continuam funcionando normalmente. **Não é possível atacar ou ativar a defesa durante o impulso**, nem iniciar um impulso enquanto a defesa está ativa; isso impede sobreposição de habilidades.
+
+A janela de proteção é curta e começa quando o comando Shift é aceito. A recarga de **3,2 segundos** permanece. O módulo `combat_rules.gd` agora testa também a prioridade entre esquiva, defesa e dano.
