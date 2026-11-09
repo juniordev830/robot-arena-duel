@@ -28,3 +28,9 @@ static func may_raise_guard(guard_seconds: float, cooldown_seconds: float) -> bo
 	if not is_finite(guard_seconds) or not is_finite(cooldown_seconds):
 		return false
 	return guard_seconds <= 0.0 and cooldown_seconds <= 0.0
+
+## A dash requires movement, a ready cooldown and no active guard.
+static func may_dash(cooldown_seconds: float, direction: Vector3, guarding: bool = false) -> bool:
+	if not is_finite(cooldown_seconds) or not direction.is_finite():
+		return false
+	return cooldown_seconds <= 0.0 and direction.length_squared() > 0.001 and not guarding
