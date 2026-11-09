@@ -10,6 +10,9 @@ const ATTACK_RANGE := 2.35
 const WALK_SPEED := 5.25
 const GUARD_DURATION := 1.1
 const GUARD_COOLDOWN := 3.0
+const DASH_SPEED := 16.0
+const DASH_DURATION := 0.20
+const DASH_COOLDOWN := 3.2
 
 var player_controlled := false
 var display_name := "Robot"
@@ -19,6 +22,9 @@ var health := MAX_HEALTH
 var _cooldown := 0.0
 var _guard_remaining := 0.0
 var _guard_cooldown_remaining := 0.0
+var _dash_remaining := 0.0
+var _dash_cooldown_remaining := 0.0
+var _dash_direction := Vector3.ZERO
 
 
 func _ready() -> void:
@@ -62,6 +68,8 @@ func _physics_process(delta: float) -> void:
 	_cooldown = maxf(0.0, _cooldown - delta)
 	_guard_remaining = maxf(0.0, _guard_remaining - delta)
 	_guard_cooldown_remaining = maxf(0.0, _guard_cooldown_remaining - delta)
+	_dash_remaining = maxf(0.0, _dash_remaining - delta)
+	_dash_cooldown_remaining = maxf(0.0, _dash_cooldown_remaining - delta)
 	var move_direction := Vector3.ZERO
 	if player_controlled:
 		var axis := Input.get_vector("move_left", "move_right", "move_up", "move_down")
@@ -71,6 +79,10 @@ func _physics_process(delta: float) -> void:
 			_guard_cooldown_remaining = GUARD_COOLDOWN
 		if Input.is_action_just_pressed("attack"):
 			_try_attack()
+		if Input.is_action_just_pressed("dash") and CombatRules.may_dash(_dash_cooldown_remaining, move_direction, _guard_remaining > 0.0):
+			_dash_direction = move_direction
+			_dash_remaining = DASH_DURATION
+			_dash_cooldown_remaining = DASH_COOLDOWN
 	elif is_instance_valid(opponent) and opponent.health > 0:
 		var toward := opponent.global_position - global_position
 		toward.y = 0.0
@@ -79,8 +91,12 @@ func _physics_process(delta: float) -> void:
 		else:
 			_try_attack()
 
-	velocity.x = move_direction.x * WALK_SPEED
-	velocity.z = move_direction.z * WALK_SPEED
+	var movement_speed := WALK_SPEED
+	if _dash_remaining > 0.0:
+		move_direction = _dash_direction
+		movement_speed = DASH_SPEED
+	velocity.x = move_direction.x * movement_speed
+	velocity.z = move_direction.z * movement_speed
 	if not is_on_floor():
 		velocity.y -= 19.0 * delta
 	else:
@@ -116,4 +132,11 @@ func guard_status() -> String:
 		return "ATIVO"
 	if _guard_cooldown_remaining > 0.0:
 		return "RECARGA %.1fs" % _guard_cooldown_remaining
+	return "PRONTO"
+
+func dash_status() -> String:
+	if _dash_remaining > 0.0:
+		return "IMPULSO"
+	if _dash_cooldown_remaining > 0.0:
+		return "RECARGA %.1fs" % _dash_cooldown_remaining
 	return "PRONTO"
