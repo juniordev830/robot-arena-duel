@@ -2,7 +2,7 @@
 
 Protótipo **planejado** de combate 3D entre robôs personalizáveis em arenas futuristas.
 
-> **Estado na branch principal:** somente conceito documentado; o núcleo de código de outro PR ainda não foi integrado. O objetivo abaixo é um MVP futuro, não uma versão jogável.
+> **Estado desta branch:** núcleo JavaScript de combate implementado com testes automatizados e demonstração no terminal. Ainda não há engine 3D, cenas, controles gráficos nem build jogável.
 
 ## Objetivo do primeiro protótipo
 
@@ -27,9 +27,22 @@ Construir uma arena pequena em que dois robôs possam mover-se, atacar, receber 
 ## Etapas recomendadas
 
 - [ ] Selecionar engine e registrar versão no projeto.
-- [ ] Criar entidades e testes para dano, recarga e vitória.
+- [x] Criar entidades e testes para dano, recarga e vitória.
 - [ ] Implementar cena de teste e controle por teclado/gamepad.
 - [ ] Adicionar HUD de vida, reinício e captura de tela real.
 - [ ] Documentar build para PC após validar uma execução.
 
 **Sem previsão de lançamento nesta etapa.** Exemplos, modelos e efeitos sonoros devem ter licença compatível.
+
+## Núcleo executável em JavaScript
+
+Há um primeiro motor de combate em `src/arena.js`. Ele mantém o estado dos robôs imutável, valida vida, dano e recarga, rejeita tempo retroativo e impede que o mesmo golpe seja aplicado novamente durante o intervalo de recarga. A vitória termina o duelo; `reiniciar` restaura a condição inicial.
+
+Requer Node.js 20+ e nenhuma dependência externa:
+
+```bash
+npm test
+npm run demo
+```
+
+A CI usa `.github/workflows/node-domain.yml`. O exemplo é uma **simulação em terminal**, não a experiência 3D final. Física, câmera, arte e controles de jogo ainda precisam ser implementados e testados.
