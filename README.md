@@ -33,3 +33,23 @@ Construir uma arena pequena em que dois robôs possam mover-se, atacar, receber 
 - [ ] Documentar build para PC após validar uma execução.
 
 **Sem previsão de lançamento nesta etapa.** Exemplos, modelos e efeitos sonoros devem ter licença compatível.
+
+## Primeiro incremento de código (em revisão)
+
+Arena local de dois robôs, movimento limitado, ataque por alcance, recarga e determinação do vencedor.
+
+O arquivo `core.py` contém a implementação executável em Python 3.11+ e `tests/test_core.py` cobre regras, entradas inválidas e repetibilidade. Não há engine 3D, UI gráfica, asset ou build final nesta entrega; o protótipo é de **domínio/testes**.
+
+Para executar a demonstração:
+
+```bash
+python core.py
+```
+
+Para verificar o comportamento:
+
+```bash
+python -m unittest discover -s tests -p 'test_*.py' -v
+```
+
+O GitHub Actions executa a suíte em cada PR. A lista de tarefas do roteiro acima descreve o objetivo completo do jogo e não deve ser interpretada como pronto para publicação.
