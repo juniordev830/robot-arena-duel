@@ -1,16 +1,21 @@
-name: Godot prototype validation
-on: [push, pull_request]
+name: Core tests
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
 jobs:
-  godot:
+  unit-tests:
     runs-on: ubuntu-latest
+    timeout-minutes: 5
     steps:
       - uses: actions/checkout@v4
-      - name: Download Godot 4.3
-        run: |
-          curl -L --fail --retry 3 -o godot.zip https://github.com/godotengine/godot-builds/releases/download/4.3-stable/Godot_v4.3-stable_linux.x86_64.zip
-          unzip -q godot.zip
-          chmod +x Godot_v4.3-stable_linux.x86_64
-      - name: Gameplay rule tests
-        run: ./Godot_v4.3-stable_linux.x86_64 --headless --path . --script tests/test_combat.gd
-      - name: Scene startup smoke test
-        run: ./Godot_v4.3-stable_linux.x86_64 --headless --path . --quit-after 5
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Run domain tests
+        run: python -m unittest discover -s tests -p 'test_*.py' -v
