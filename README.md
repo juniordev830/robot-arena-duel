@@ -1,8 +1,8 @@
 # Robot Arena Duel
 
-Protótipo **planejado** de combate 3D entre robôs personalizáveis em arenas futuristas.
+Protótipo de combate entre robôs com **regras locais implementadas em Python**. A versão atual permite simular movimento, ataques, recarga, dano e vitória no terminal; a arena gráfica 3D continua planejada.
 
-> **Estado na branch principal:** somente conceito documentado; o núcleo de código de outro PR ainda não foi integrado. O objetivo abaixo é um MVP futuro, não uma versão jogável.
+> **Estado da `main`:** `core.py`, `tests/test_core.py` e workflow de CI presentes. Existe demonstração de lógica de jogo, **não** um jogo 3D jogável.
 
 ## Objetivo do primeiro protótipo
 
@@ -27,14 +27,14 @@ Construir uma arena pequena em que dois robôs possam mover-se, atacar, receber 
 ## Etapas recomendadas
 
 - [ ] Selecionar engine e registrar versão no projeto.
-- [ ] Criar entidades e testes para dano, recarga e vitória.
+- [x] Criar entidades e testes para dano, recarga e vitória.
 - [ ] Implementar cena de teste e controle por teclado/gamepad.
 - [ ] Adicionar HUD de vida, reinício e captura de tela real.
 - [ ] Documentar build para PC após validar uma execução.
 
 **Sem previsão de lançamento nesta etapa.** Exemplos, modelos e efeitos sonoros devem ter licença compatível.
 
-## Primeiro incremento de código (em revisão)
+## Primeiro incremento de código (disponível na `main`)
 
 Arena local de dois robôs, movimento limitado, ataque por alcance, recarga e determinação do vencedor.
 
